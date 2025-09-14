@@ -22,11 +22,14 @@ const { width, height } = Dimensions.get('window')
 export default function Auth() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const [focusedField, setFocusedField] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   // Simple animations
   const fadeAnim = useRef(new Animated.Value(0)).current
@@ -66,14 +69,39 @@ export default function Auth() {
   }
 
   async function signUpWithEmail() {
+    // Validate password match
+    if (password !== confirmPassword) {
+      Alert.alert('Password Mismatch', 'Passwords do not match. Please try again.')
+      return
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      Alert.alert('Password Too Short', 'Password must be at least 6 characters long.')
+      return
+    }
+
+    // Validate email
+    const emailRegex = /\S+@\S+\.\S+/
+    if (!emailRegex.test(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.')
+      return
+    }
+
+    // Validate display name
+    if (!displayName.trim()) {
+      Alert.alert('Display Name Required', 'Please enter a display name.')
+      return
+    }
+
     setLoading(true)
     try {
       const { error } = await supabase.auth.signUp({
-        email: email,
+        email: email.trim(),
         password: password,
         options: {
           data: {
-            display_name: displayName,
+            display_name: displayName.trim(),
             phone: phoneNumber || null,
           }
         }
@@ -87,6 +115,7 @@ export default function Auth() {
         setPhoneNumber('')
         setEmail('')
         setPassword('')
+        setConfirmPassword('')
       }
     } finally {
       setLoading(false)
@@ -189,34 +218,70 @@ export default function Auth() {
             </View>
 
             <View style={styles.inputContainer}>
-              <TextInput
-                style={getInputStyle('password')}
-                placeholder="Password"
-                placeholderTextColor="#b9b9b9"
-                value={password}
-                onChangeText={setPassword}
-                onFocus={() => setFocusedField('password')}
-                onBlur={() => setFocusedField(null)}
-                secureTextEntry={true}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[getInputStyle('password'), styles.passwordInput]}
+                  placeholder="Password"
+                  placeholderTextColor="#b9b9b9"
+                  value={password}
+                  onChangeText={setPassword}
+                  onFocus={() => setFocusedField('password')}
+                  onBlur={() => setFocusedField(null)}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <TouchableOpacity
+                  style={styles.passwordToggle}
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <Text style={styles.passwordToggleText}>
+                    {showPassword ? 'Hide' : 'Show'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
             {isSignUp && (
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={getInputStyle('phone')}
-                  placeholder="Phone Number (Optional)"
-                  placeholderTextColor="#b9b9b9"
-                  value={phoneNumber}
-                  onChangeText={setPhoneNumber}
-                  onFocus={() => setFocusedField('phone')}
-                  onBlur={() => setFocusedField(null)}
-                  keyboardType="phone-pad"
-                  autoCorrect={false}
-                />
-              </View>
+              <>
+                <View style={styles.inputContainer}>
+                  <View style={styles.passwordContainer}>
+                    <TextInput
+                      style={[getInputStyle('confirmPassword'), styles.passwordInput]}
+                      placeholder="Confirm Password"
+                      placeholderTextColor="#b9b9b9"
+                      value={confirmPassword}
+                      onChangeText={setConfirmPassword}
+                      onFocus={() => setFocusedField('confirmPassword')}
+                      onBlur={() => setFocusedField(null)}
+                      secureTextEntry={!showConfirmPassword}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                    />
+                    <TouchableOpacity
+                      style={styles.passwordToggle}
+                      onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      <Text style={styles.passwordToggleText}>
+                        {showConfirmPassword ? 'Hide' : 'Show'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={getInputStyle('phone')}
+                    placeholder="Phone Number (Optional)"
+                    placeholderTextColor="#b9b9b9"
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                    onFocus={() => setFocusedField('phone')}
+                    onBlur={() => setFocusedField(null)}
+                    keyboardType="phone-pad"
+                    autoCorrect={false}
+                  />
+                </View>
+              </>
             )}
 
             <TouchableOpacity
@@ -335,7 +400,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 60,
+    marginBottom: 40,
   },
   logo: {
     width: 80,
@@ -363,10 +428,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   formContainer: {
-    marginBottom: 40,
+    marginBottom: 20,
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   input: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
@@ -385,6 +450,27 @@ const styles = StyleSheet.create({
   },
   inputFocused: {
     borderColor: '#b50707',
+  },
+  passwordContainer: {
+    position: 'relative',
+  },
+  passwordInput: {
+    paddingRight: 60,
+  },
+  passwordToggle: {
+    position: 'absolute',
+    right: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 48,
+    height: 56,
+  },
+  passwordToggleText: {
+    color: '#b9b9b9',
+    fontSize: 14,
+    fontWeight: '500',
   },
   loginButton: {
     height: 48,
@@ -420,7 +506,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 16,
   },
   footerText: {
     color: '#ffffff',
