@@ -161,7 +161,7 @@ export default function Auth() {
                 <TextInput
                   style={getInputStyle('displayName')}
                   placeholder="Display Name"
-                  placeholderTextColor="#666666"
+                  placeholderTextColor="#b9b9b9"
                   value={displayName}
                   onChangeText={setDisplayName}
                   onFocus={() => setFocusedField('displayName')}
@@ -176,7 +176,7 @@ export default function Auth() {
               <TextInput
                 style={getInputStyle('email')}
                 placeholder="Email Address"
-                placeholderTextColor="#666666"
+                placeholderTextColor="#b9b9b9"
                 value={email}
                 onChangeText={setEmail}
                 onFocus={() => setFocusedField('email')}
@@ -191,7 +191,7 @@ export default function Auth() {
               <TextInput
                 style={getInputStyle('password')}
                 placeholder="Password"
-                placeholderTextColor="#666666"
+                placeholderTextColor="#b9b9b9"
                 value={password}
                 onChangeText={setPassword}
                 onFocus={() => setFocusedField('password')}
@@ -207,7 +207,7 @@ export default function Auth() {
                 <TextInput
                   style={getInputStyle('phone')}
                   placeholder="Phone Number (Optional)"
-                  placeholderTextColor="#666666"
+                  placeholderTextColor="#b9b9b9"
                   value={phoneNumber}
                   onChangeText={setPhoneNumber}
                   onFocus={() => setFocusedField('phone')}
@@ -359,23 +359,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: 14,
     padding: 18,
     fontSize: 16,
-    color: '#000000',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
+    color: '#ffffff',
+    shadowColor: '#b50707',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
     elevation: 6,
-    borderWidth: 3,
-    borderColor: '#cc0000',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     minHeight: 56,
   },
   inputFocused: {
-    borderColor: '#ff4444',
-    backgroundColor: '#fff5f5',
+    borderColor: '#b50707',
   },
   loginButton: {
     backgroundColor: '#cc0000',
