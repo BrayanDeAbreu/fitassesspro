@@ -17,7 +17,7 @@ export default function Account({ session }: Props) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Welcome to FitAssess Pro!</Text>
-        <Text style={styles.subtitle}>You're successfully logged in</Text>
+        <Text style={styles.subtitle}>You&apos;re successfully logged in</Text>
       </View>
 
       <View style={styles.userInfo}>

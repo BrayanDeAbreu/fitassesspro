@@ -46,7 +46,7 @@ export default function Auth() {
         useNativeDriver: true,
       }),
     ]).start()
-  }, [])
+  }, [fadeAnim, slideAnim])
 
   async function signInWithEmail() {
     setLoading(true)
@@ -86,6 +86,26 @@ export default function Auth() {
         setPhoneNumber('')
         setEmail('')
         setPassword('')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function resetPassword() {
+    if (!email) {
+      Alert.alert('Email Required', 'Please enter your email address to reset your password.')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email)
+
+      if (error) {
+        Alert.alert('Reset Error', error.message)
+      } else {
+        Alert.alert('Reset Email Sent', 'Check your email for password reset instructions!')
       }
     } finally {
       setLoading(false)
@@ -207,6 +227,18 @@ export default function Auth() {
                 {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Log in'}
               </Text>
             </TouchableOpacity>
+
+            {!isSignUp && (
+              <TouchableOpacity
+                style={styles.forgotPasswordButton}
+                onPress={resetPassword}
+                disabled={loading}
+              >
+                <Text style={styles.forgotPasswordText}>
+                  Forgot your password?
+                </Text>
+              </TouchableOpacity>
+            )}
           </Animated.View>
 
           {/* Footer */}
@@ -378,5 +410,16 @@ const styles = StyleSheet.create({
   footerBoldText: {
     fontWeight: '700',
     color: '#ffffff',
+  },
+  forgotPasswordButton: {
+    alignItems: 'center',
+    marginTop: 16,
+    paddingVertical: 8,
+  },
+  forgotPasswordText: {
+    color: '#ffffff',
+    fontSize: 16,
+    textDecorationLine: 'underline',
+    opacity: 0.8,
   },
 })
