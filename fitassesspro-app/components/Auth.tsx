@@ -14,6 +14,7 @@ import {
   Animated,
   Easing,
 } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import { supabase } from '../lib/supabase'
 
 const { width, height } = Dimensions.get('window')
@@ -222,10 +223,19 @@ export default function Auth() {
               style={[styles.loginButton, loading && styles.buttonDisabled]}
               onPress={isSignUp ? signUpWithEmail : signInWithEmail}
               disabled={loading}
+              activeOpacity={0.8}
             >
-              <Text style={styles.loginButtonText}>
-                {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Log in'}
-              </Text>
+              <LinearGradient
+                colors={['rgba(255, 255, 255, 0.06)', 'rgba(181, 7, 7, 0.15)', 'rgba(255, 255, 255, 0.02)']}
+                style={styles.buttonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                locations={[0, 0.5, 1]}
+              >
+                <Text style={styles.loginButtonText}>
+                  {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Log in'}
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
 
             {!isSignUp && (
@@ -377,25 +387,36 @@ const styles = StyleSheet.create({
     borderColor: '#b50707',
   },
   loginButton: {
-    backgroundColor: '#cc0000',
-    borderRadius: 16,
-    padding: 18,
-    alignItems: 'center',
+    height: 48,
+    borderRadius: 14,
     marginTop: 20,
-    shadowColor: '#cc0000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+    marginHorizontal: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    shadowColor: 'rgba(181, 7, 7, 0.3)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.6,
+    shadowRadius: 6,
+    elevation: 3,
+    overflow: 'hidden',
+  },
+  buttonGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
   },
   buttonDisabled: {
-    backgroundColor: '#666666',
-    shadowColor: '#666666',
+    opacity: 0.4,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   loginButtonText: {
     color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
   footer: {
     alignItems: 'center',
